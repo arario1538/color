@@ -28,12 +28,6 @@
       height: 100px;
       margin: 20px auto;
     }
-    #recommended-colors div {
-      display: inline-block;
-      width: 100px;
-      height: 100px;
-      margin: 5px;
-    }
   </style>
 </head>
 <body>
@@ -48,13 +42,12 @@
   </div>
 
   <!-- 컬러 팔레트 생성 -->
-  <div class="section" id="color-picker">
+  <div id="color-picker">
     <h2>컬러 팔레트 생성</h2>
-    <button id="generate-palette-button">팔레트 생성</button>
+    <input type="color" id="base-color" value="#ff0000">
+    <button onclick="generatePalette()">팔레트 생성</button>
     <div id="palette"></div>
   </div>
-
-  <script src="script.js"></script>
 
   <!-- 이미지 업로드 및 스포이드 기능 -->
   <div id="color-extractor">
