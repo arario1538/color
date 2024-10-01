@@ -62,7 +62,7 @@ const colorNameToHex = {
   // 필요에 따라 더 많은 색상명 추가
 };
 
-// 팔레트 생성 함수
+// 팔레트 생성 함수 (기존 코드 유지)
 function generatePalette() {
   const baseColor = document.getElementById('base-color').value;
   const paletteDiv = document.getElementById('palette');
@@ -77,7 +77,7 @@ function generatePalette() {
   }
 }
 
-// 밝기 조절 함수
+// 밝기 조절 함수 (기존 코드 유지)
 function adjustBrightness(hex, percent) {
   hex = hex.replace(/^\s*#|\s*$/g, '');
   if(hex.length == 3){
@@ -98,7 +98,7 @@ function adjustBrightness(hex, percent) {
   }).join('');
 }
 
-// 이미지에서 색상 추출 기능
+// 이미지에서 색상 추출 기능 (기존 코드 유지)
 const fileInput = document.getElementById('file-input');
 const canvas = document.getElementById('image-canvas');
 const ctx = canvas.getContext('2d');
@@ -128,7 +128,7 @@ canvas.addEventListener('click', function(e){
   colorCodeP.innerText = `선택한 색상 코드: ${hex}`;
 });
 
-// RGB를 HEX로 변환
+// RGB를 HEX로 변환 (기존 코드 유지)
 function rgbToHex(r, g, b) {
   return "#" + [r, g, b].map(x => {
     const hex = x.toString(16)
@@ -136,7 +136,7 @@ function rgbToHex(r, g, b) {
   }).join('');
 }
 
-// 스포이드 기능 구현
+// 스포이드 기능 구현 (기존 코드 유지)
 document.getElementById('eyedropper-button').addEventListener('click', async () => {
   if ('EyeDropper' in window) {
     try {
@@ -157,19 +157,23 @@ document.getElementById('eyedropper-button').addEventListener('click', async () 
 document.getElementById('recommend-button').addEventListener('click', recommendColors);
 
 function recommendColors() {
-  const input = document.getElementById('color-input').value.trim();
+  const inputElement = document.getElementById('color-input');
+  const input = inputElement.value.trim();
   const colorsDiv = document.getElementById('recommended-colors');
   colorsDiv.innerHTML = '';
 
   let baseColor = '';
 
-  // 색상명 처리
-  if (colorNameToHex[input]) {
-    baseColor = colorNameToHex[input];
-  } else if (/^#?[0-9A-Fa-f]{6}$/.test(input)) {
+  // 색상명 처리 (입력값을 소문자로 변환하여 비교)
+  const inputLower = input.toLowerCase();
+
+  if (colorNameToHex[inputLower]) {
+    baseColor = colorNameToHex[inputLower];
+  } else if (/^#?[0-9A-Fa-f]{3}$/.test(input) || /^#?[0-9A-Fa-f]{6}$/.test(input)) {
     baseColor = input.startsWith('#') ? input : '#' + input;
   } else {
     alert('유효한 색상명이나 컬러 코드를 입력해주세요.');
+    inputElement.focus();
     return;
   }
 
@@ -184,7 +188,7 @@ function recommendColors() {
   });
 }
 
-// 추천 색상 조합 생성 함수
+// 추천 색상 조합 생성 함수 (기존 코드 유지)
 function getRecommendedColors(hex) {
   // 보색과 유사색 2개를 반환
   const complementaryColor = getComplementaryColor(hex);
@@ -193,7 +197,7 @@ function getRecommendedColors(hex) {
   return [complementaryColor, ...analogousColors];
 }
 
-// 보색 계산 함수
+// 보색 계산 함수 (기존 코드 유지)
 function getComplementaryColor(hex) {
   const hsl = hexToHSL(hex);
   let newHue = (hsl.h + 180) % 360;
@@ -201,7 +205,7 @@ function getComplementaryColor(hex) {
   return HSLToHex(newHSL);
 }
 
-// 유사색 계산 함수
+// 유사색 계산 함수 (기존 코드 유지)
 function getAnalogousColors(hex) {
   const hsl = hexToHSL(hex);
   const colors = [];
@@ -215,7 +219,7 @@ function getAnalogousColors(hex) {
   return colors;
 }
 
-// HEX를 HSL로 변환하는 함수
+// HEX를 HSL로 변환하는 함수 (기존 코드 유지)
 function hexToHSL(H) {
   // Convert hex to RGB first
   let r = 0, g = 0, b = 0;
@@ -257,7 +261,7 @@ function hexToHSL(H) {
   return { h, s, l };
 }
 
-// HSL을 HEX로 변환하는 함수
+// HSL을 HEX로 변환하는 함수 (기존 코드 유지)
 function HSLToHex(hsl) {
   let { h, s, l } = hsl;
   s /= 100;
