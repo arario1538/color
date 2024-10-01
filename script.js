@@ -24,7 +24,7 @@ const colorNameToHex = {
   '청록': '#00ffff',
   '시안': '#00ffff',
   '에메랄드': '#50c878',
-  
+
   '파랑': '#0000ff',
   '블루': '#0000ff',
   '푸른색': '#1e90ff',
@@ -58,11 +58,10 @@ const colorNameToHex = {
   '흰색': '#f8f8ff',
   '하얀색': '#f5f5f5'
 };
-
   // 필요에 따라 더 많은 색상명 추가
 };
 
-// 팔레트 생성 함수 (기존 코드 유지)
+// 팔레트 생성 함수
 function generatePalette() {
   const baseColor = document.getElementById('base-color').value;
   const paletteDiv = document.getElementById('palette');
@@ -70,14 +69,25 @@ function generatePalette() {
 
   // 밝기 조절한 색상 5개 생성
   for(let i = -2; i <= 2; i++) {
-    const colorDiv = document.createElement('div');
+    const colorItem = document.createElement('div');
+    colorItem.className = 'color-item';
+
+    const colorBlock = document.createElement('div');
+    colorBlock.className = 'color-block';
+
     const adjustedColor = adjustBrightness(baseColor, i * 20);
-    colorDiv.style.backgroundColor = adjustedColor;
-    paletteDiv.appendChild(colorDiv);
+    colorBlock.style.backgroundColor = adjustedColor;
+
+    const colorCode = document.createElement('span');
+    colorCode.textContent = adjustedColor.toUpperCase();
+
+    colorItem.appendChild(colorBlock);
+    colorItem.appendChild(colorCode);
+    paletteDiv.appendChild(colorItem);
   }
 }
 
-// 밝기 조절 함수 (기존 코드 유지)
+// 밝기 조절 함수
 function adjustBrightness(hex, percent) {
   hex = hex.replace(/^\s*#|\s*$/g, '');
   if(hex.length == 3){
@@ -125,10 +135,10 @@ canvas.addEventListener('click', function(e){
   const pixel = ctx.getImageData(x, y, 1, 1).data;
   const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
   selectedColorDiv.style.backgroundColor = hex;
-  colorCodeP.innerText = `선택한 색상 코드: ${hex}`;
+  colorCodeP.innerText = `선택한 색상 코드: ${hex.toUpperCase()}`;
 });
 
-// RGB를 HEX로 변환 (기존 코드 유지)
+// RGB를 HEX로 변환
 function rgbToHex(r, g, b) {
   return "#" + [r, g, b].map(x => {
     const hex = x.toString(16)
@@ -144,7 +154,7 @@ document.getElementById('eyedropper-button').addEventListener('click', async () 
       const result = await eyeDropper.open();
       const color = result.sRGBHex;
       document.getElementById('eyedropper-color').style.backgroundColor = color;
-      document.getElementById('eyedropper-code').innerText = `선택한 색상 코드: ${color}`;
+      document.getElementById('eyedropper-code').innerText = `선택한 색상 코드: ${color.toUpperCase()}`;
     } catch (e) {
       console.error(e);
     }
@@ -182,9 +192,19 @@ function recommendColors() {
 
   // 추천 색상 표시
   recommendedColors.forEach(color => {
-    const colorDiv = document.createElement('div');
-    colorDiv.style.backgroundColor = color;
-    colorsDiv.appendChild(colorDiv);
+    const colorItem = document.createElement('div');
+    colorItem.className = 'color-item';
+
+    const colorBlock = document.createElement('div');
+    colorBlock.className = 'color-block';
+    colorBlock.style.backgroundColor = color;
+
+    const colorCode = document.createElement('span');
+    colorCode.textContent = color.toUpperCase();
+
+    colorItem.appendChild(colorBlock);
+    colorItem.appendChild(colorCode);
+    colorsDiv.appendChild(colorItem);
   });
 }
 
