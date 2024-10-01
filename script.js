@@ -1,26 +1,26 @@
-// 색상명과 HEX 코드 매핑 객체 추가
+// 색상명과 HEX 코드 매핑 객체
 const colorNameToHex = {
   '빨강': '#ff0000',
   '레드': '#ff0000',
   '붉은색': '#d40000',
   '홍색': '#ff2400',
-  
+
   '주황': '#ff7f00',
   '오렌지': '#ffa500',
   '등색': '#ff6600',
-  
+
   '노랑': '#ffff00',
   '옐로우': '#ffff00',
   '황색': '#ffd700',
-  
+
   '연두': '#adff2f',
   '라이트그린': '#90ee90',
   '연한초록': '#98fb98',
-  
+
   '초록': '#008000',
   '그린': '#008000',
   '녹색': '#228b22',
-  
+
   '청록': '#00ffff',
   '시안': '#00ffff',
   '에메랄드': '#50c878',
@@ -28,38 +28,48 @@ const colorNameToHex = {
   '파랑': '#0000ff',
   '블루': '#0000ff',
   '푸른색': '#1e90ff',
-  
+
   '남색': '#000080',
   '네이비': '#000080',
   '짙은파랑': '#002147',
-  
+
   '보라': '#800080',
   '퍼플': '#800080',
   '자주색': '#6a0dad',
-  
+
   '분홍': '#ff69b4',
   '핑크': '#ffc0cb',
   '연한홍색': '#ff6eb4',
-  
+
   '갈색': '#a52a2a',
   '브라운': '#a52a2a',
   '밤색': '#8b4513',
-  
+
   '회색': '#808080',
   '그레이': '#808080',
   '은색': '#c0c0c0',
-  
+
   '검정': '#000000',
   '블랙': '#000000',
   '흑색': '#0b0b0b',
-  
+
   '하양': '#ffffff',
   '화이트': '#ffffff',
   '흰색': '#f8f8ff',
-  '하얀색': '#f5f5f5'
-};
+  '하얀색': '#f5f5f5',
   // 필요에 따라 더 많은 색상명 추가
 };
+
+// HEX 코드로 색상명 찾기
+function hexToColorName(hex) {
+  hex = hex.toUpperCase();
+  for (let [name, code] of Object.entries(colorNameToHex)) {
+    if (code === hex) {
+      return name;
+    }
+  }
+  return ''; // 해당하는 색상명이 없을 경우 빈 문자열 반환
+}
 
 // 팔레트 생성 함수
 function generatePalette() {
@@ -79,10 +89,24 @@ function generatePalette() {
     colorBlock.style.backgroundColor = adjustedColor;
 
     const colorCode = document.createElement('span');
+    colorCode.className = 'color-code';
     colorCode.textContent = adjustedColor.toUpperCase();
+
+    const colorName = document.createElement('span');
+    colorName.className = 'color-name';
+    colorName.textContent = hexToColorName(adjustedColor);
+
+    // 색상 코드 클릭 시 복사 기능 추가
+    colorCode.style.cursor = 'pointer';
+    colorCode.addEventListener('click', () => {
+      copyToClipboard(adjustedColor.toUpperCase());
+    });
 
     colorItem.appendChild(colorBlock);
     colorItem.appendChild(colorCode);
+    if (colorName.textContent) {
+      colorItem.appendChild(colorName);
+    }
     paletteDiv.appendChild(colorItem);
   }
 }
@@ -108,7 +132,16 @@ function adjustBrightness(hex, percent) {
   }).join('');
 }
 
-// 이미지에서 색상 추출 기능 (기존 코드 유지)
+// 색상 코드 복사 함수
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert(`클립보드에 복사되었습니다: ${text}`);
+  }).catch(err => {
+    alert('복사에 실패하였습니다.');
+  });
+}
+
+// 이미지에서 색상 추출 기능
 const fileInput = document.getElementById('file-input');
 const canvas = document.getElementById('image-canvas');
 const ctx = canvas.getContext('2d');
@@ -133,9 +166,15 @@ canvas.addEventListener('click', function(e){
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   const pixel = ctx.getImageData(x, y, 1, 1).data;
-  const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+  const hex = rgbToHex(pixel[0], pixel[1], pixel[2]).toUpperCase();
   selectedColorDiv.style.backgroundColor = hex;
-  colorCodeP.innerText = `선택한 색상 코드: ${hex.toUpperCase()}`;
+  colorCodeP.innerText = `선택한 색상 코드: ${hex}`;
+
+  // 선택한 색상명 표시
+  const colorName = hexToColorName(hex);
+  if (colorName) {
+    colorCodeP.innerText += ` (${colorName})`;
+  }
 });
 
 // RGB를 HEX로 변환
@@ -146,15 +185,21 @@ function rgbToHex(r, g, b) {
   }).join('');
 }
 
-// 스포이드 기능 구현 (기존 코드 유지)
+// 스포이드 기능 구현
 document.getElementById('eyedropper-button').addEventListener('click', async () => {
   if ('EyeDropper' in window) {
     try {
       const eyeDropper = new EyeDropper();
       const result = await eyeDropper.open();
-      const color = result.sRGBHex;
+      const color = result.sRGBHex.toUpperCase();
       document.getElementById('eyedropper-color').style.backgroundColor = color;
-      document.getElementById('eyedropper-code').innerText = `선택한 색상 코드: ${color.toUpperCase()}`;
+      document.getElementById('eyedropper-code').innerText = `선택한 색상 코드: ${color}`;
+
+      // 선택한 색상명 표시
+      const colorName = hexToColorName(color);
+      if (colorName) {
+        document.getElementById('eyedropper-code').innerText += ` (${colorName})`;
+      }
     } catch (e) {
       console.error(e);
     }
@@ -200,15 +245,29 @@ function recommendColors() {
     colorBlock.style.backgroundColor = color;
 
     const colorCode = document.createElement('span');
+    colorCode.className = 'color-code';
     colorCode.textContent = color.toUpperCase();
+
+    const colorName = document.createElement('span');
+    colorName.className = 'color-name';
+    colorName.textContent = hexToColorName(color);
+
+    // 색상 코드 클릭 시 복사 기능 추가
+    colorCode.style.cursor = 'pointer';
+    colorCode.addEventListener('click', () => {
+      copyToClipboard(color.toUpperCase());
+    });
 
     colorItem.appendChild(colorBlock);
     colorItem.appendChild(colorCode);
+    if (colorName.textContent) {
+      colorItem.appendChild(colorName);
+    }
     colorsDiv.appendChild(colorItem);
   });
 }
 
-// 추천 색상 조합 생성 함수 (기존 코드 유지)
+// 추천 색상 조합 생성 함수
 function getRecommendedColors(hex) {
   // 보색과 유사색 2개를 반환
   const complementaryColor = getComplementaryColor(hex);
@@ -217,7 +276,7 @@ function getRecommendedColors(hex) {
   return [complementaryColor, ...analogousColors];
 }
 
-// 보색 계산 함수 (기존 코드 유지)
+// 보색 계산 함수
 function getComplementaryColor(hex) {
   const hsl = hexToHSL(hex);
   let newHue = (hsl.h + 180) % 360;
@@ -225,7 +284,7 @@ function getComplementaryColor(hex) {
   return HSLToHex(newHSL);
 }
 
-// 유사색 계산 함수 (기존 코드 유지)
+// 유사색 계산 함수
 function getAnalogousColors(hex) {
   const hsl = hexToHSL(hex);
   const colors = [];
@@ -239,7 +298,7 @@ function getAnalogousColors(hex) {
   return colors;
 }
 
-// HEX를 HSL로 변환하는 함수 (기존 코드 유지)
+// HEX를 HSL로 변환하는 함수
 function hexToHSL(H) {
   // Convert hex to RGB first
   let r = 0, g = 0, b = 0;
@@ -281,7 +340,7 @@ function hexToHSL(H) {
   return { h, s, l };
 }
 
-// HSL을 HEX로 변환하는 함수 (기존 코드 유지)
+// HSL을 HEX로 변환하는 함수
 function HSLToHex(hsl) {
   let { h, s, l } = hsl;
   s /= 100;
@@ -303,5 +362,5 @@ function HSLToHex(hsl) {
   g = Math.round((g + m) * 255).toString(16).padStart(2, '0');
   b = Math.round((b + m) * 255).toString(16).padStart(2, '0');
 
-  return `#${r}${g}${b}`;
+  return `#${r}${g}${b}`.toUpperCase();
 }
